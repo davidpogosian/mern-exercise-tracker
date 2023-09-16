@@ -13,20 +13,26 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-/* 
-database uri (we get it from Atlas dashboard)
-connect to database
-
-looks like useCreateIndex isn't supported
-*/
+//database uri (we get it from Atlas dashboard)
+//connect to database
+//looks like useCreateIndex isn't supported
 const uri = process.env.ATLAS_URI;
 mongoose.connect(uri, { useNewUrlParser: true });
 
-// once connection is open =>
+// once connection is open, log this message
 const connection = mongoose.connection;
 connection.once('open', () => {
     console.log("MongoDB database connection established");
 });
+
+// import routers for exercises & users
+const exercisesRouter = require('./routes/exercises');
+const usersRouter = require('./routes/users');
+
+// hook up exercise & users routers
+app.use('/exercises', exercisesRouter);
+app.use('/users', usersRouter);
+
 
 // starts the server
 app.listen(port, () => {
